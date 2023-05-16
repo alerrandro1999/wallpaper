@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:troca_papel/pages/page.dart';
+import 'package:troca_papel/screen/page.dart';
 
 void main() {
   runApp(const MyApp());
