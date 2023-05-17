@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:troca_papel/key/api_key.dart';
 
@@ -73,6 +75,36 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _setWallpaper(String imageUrl) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(width: 16.0),
+                Text('Definindo papel de parede...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    var file = await DefaultCacheManager().getSingleFile(imageUrl);
+
+    await WallpaperManager.setWallpaperFromFile(
+      file.path,
+      WallpaperManager.HOME_SCREEN,
+    ) as String;
+    Navigator.pop(context);
+  }
+
   Widget _buildImageItem(int index) {
     if (index >= _imageUrls.length) {
       if (_isLoading) {
@@ -82,7 +114,12 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    return Image.network(_imageUrls[index]);
+    return GestureDetector(
+      onTap: () {
+        _setWallpaper(_imageUrls[index]);
+      },
+      child: Image.network(_imageUrls[index]),
+    );
   }
 
   @override
@@ -108,8 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               mainAxisExtent: 180,
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 7,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
             ),
             itemCount: _imageUrls.length + 1,
             itemBuilder: (context, index) {
