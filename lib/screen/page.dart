@@ -80,12 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
+        return const Dialog(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 16.0),
                 Text('Definindo papel de parede...'),
@@ -122,13 +122,50 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Mudar Wallpaper'),
+          content: const Text(
+            'Clique sobre a imagem desejada para mudar o papel de parede.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        backgroundColor: Colors.deepPurple[600],
         title: Text(widget.title),
-        backgroundColor: const Color(0xFF0D6847),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextButton(
+              onPressed: () => _dialogBuilder(context),
+              child: const Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
